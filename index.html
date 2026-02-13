@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<!--
+    ====================================
+    FILES YOU NEED TO ADD:
+    ====================================
+    1. sticker1.png - Cute sticker for page 1 (appears in the "Will you be my Valentine?" card)
+       - Recommended size: 300x300px or similar
+       - Format: PNG with transparent background preferred
+       
+    2. sticker2.png - Cute kissing couple sticker for page 2 (appears in celebration page)
+       - Recommended size: 400x400px or similar
+       - Format: PNG with transparent background preferred
+       
+    3. music.mp3 - Background music file (romantic song)
+       - Format: MP3 (most compatible)
+       - Alternative formats: .ogg, .wav also work
+       - Music will start playing automatically after clicking YES or NO on the first page
+       - Music loops continuously
+       - Users can toggle on/off with music button in bottom-right corner
+       
+    4. bouquet.png - Big bouquet of flowers image for page 4
+       - Recommended size: 800x800px or similar
+       - Format: PNG or JPG
+       - This appears on the flowers page before the final message
+       - Place all files in the same folder as this HTML file
+    
+    ====================================
+    TO SWITCH TO ARABIC:
+    ====================================
+    1. Change lang="en" to lang="ar" (in line below)
+    2. Change dir="ltr" to dir="rtl" (in line below)
+    3. Translate the text following the Arabic translation guides in comments throughout the file
+    
+    ====================================
+    IMPORTANT DATE:
+    ====================================
+    - Search for "const firstMeeting" in the JavaScript section (around line 600+)
+    - Currently set to: 17 December 2025 at 23:14:00 (11:14 PM)
+    - Format: 'YYYY-MM-DDTHH:MM:SS'
+    - Example: '2025-12-17T23:14:00' means December 17, 2025 at 11:14 PM
+    - Adjust if you need to change the date/time
+    
+    ====================================
+    HOW TO USE:
+    ====================================
+    1. Place all your image files and music file in the same folder as this HTML
+    2. Make sure filenames match exactly (case-sensitive!)
+    3. Open the HTML file in a web browser
+    4. For best experience, use Chrome, Safari, or Firefox
+    5. Works on mobile phones and tablets too!
+-->
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#ff6b9d">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>💘 A Valentine's Surprise</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Amiri:wght@400;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --pink-primary: #ff6b9d;
+            --pink-light: #ffc2d4;
+            --pink-dark: #ff1b6d;
+            --white: #fff;
+            --cream: #fff5f7;
+            --shadow: rgba(255, 107, 157, 0.3);
+        }
+        
+        body {
+            font-family: 'Quicksand', 'Cairo', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* RTL Support for Arabic */
+        html[dir="rtl"] body {
+            font-family: 'Cairo', 'Quicksand', sans-serif;
+        }
+        
+        html[dir="rtl"] .buttons {
+            flex-direction: row-reverse;
+        }
+        
+        html[dir="rtl"] .letter {
+            text-align: right;
+            direction: rtl;
+        }
+        
+        html[dir="rtl"] .letter .signature {
+            text-align: left;
+        }
+        
+        .page {
+            min-height: 100vh;
+            min-height: calc(var(--vh, 1vh) * 100);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .page.hidden {
+            display: none;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        /* Animated background */
+        .bg-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 25%, #ffd4e8 50%, #ffc2d4 75%, #ffb3cc 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            z-index: -2;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Floating hearts background */
+        .heart-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .floating-heart {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.15;
+            animation: float 15s infinite;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Page 1 - Question */
+        .card {
+            background: white;
+            padding: 60px 80px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px var(--shadow);
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+            position: relative;
+            animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                padding: 40px 30px;
+                width: 85%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 20px;
+                width: 90%;
+            }
+        }
+        
+        @keyframes cardEntrance {
+            from {
+                transform: scale(0.8) translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            background: linear-gradient(45deg, var(--pink-light), var(--pink-primary), var(--pink-dark));
+            border-radius: 30px;
+            z-index: -1;
+            opacity: 0;
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes borderGlow {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 0.3; }
+        }
+        
+        .big-heart {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            object-fit: contain;
+        }
+        
+        @media (max-width: 480px) {
+            .big-heart {
+                width: 100px;
+                height: 100px;
+            }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            15% { transform: scale(1.15); }
+            30% { transform: scale(1); }
+        }
+        
+        h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 42px;
+            color: var(--pink-primary);
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.2);
+        }
+        
+        html[dir="rtl"] h1 {
+            font-family: 'Amiri', 'Pacifico', cursive;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 32px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+            }
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+            position: relative;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            font-family: 'Quicksand', sans-serif;
+            font-weight: 700;
+            font-size: 24px;
+            padding: 18px 45px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 20px var(--shadow);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html[dir="rtl"] button {
+            font-family: 'Cairo', 'Quicksand', sans-serif;
+        }
+        
+        @media (max-width: 768px) {
+            button {
+                font-size: 20px;
+                padding: 15px 35px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            button {
+                font-size: 18px;
+                padding: 12px 30px;
+            }
+        }
+        
+        .yes-btn {
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-dark));
+            color: white;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .yes-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 30px var(--shadow);
+        }
+        
+        .no-btn {
+            background: white;
+            color: var(--pink-primary);
+            border: 3px solid var(--pink-primary);
+            position: absolute;
+            left: calc(50% + 120px);
+            transition: all 0.15s ease;
+        }
+        
+        .no-btn:hover {
+            transform: scale(0.95);
+        }
+        
+        /* Page 2 - Celebration */
+        .celebration {
+            text-align: center;
+            color: var(--pink-primary);
+            padding: 20px;
+        }
+        
+        .celebration h1 {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: celebrateText 1s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .celebration h1 {
+                font-size: 48px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .celebration h1 {
+                font-size: 36px;
+            }
+        }
+        
+        @keyframes celebrateText {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+        
+        .celebration p {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            color: var(--pink-dark);
+        }
+        
+        @media (max-width: 768px) {
+            .celebration p {
+                font-size: 22px;
+                margin-bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .celebration p {
+                font-size: 18px;
+                margin-bottom: 25px;
+            }
+        }
+        
+        .gift-btn {
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-dark));
+            color: white;
+            font-size: 28px;
+            padding: 20px 50px;
+            animation: bounce 2s ease infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .gift-btn {
+                font-size: 22px;
+                padding: 16px 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gift-btn {
+                font-size: 18px;
+                padding: 14px 35px;
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .gift-btn:hover {
+            animation: none;
+            transform: scale(1.1);
+        }
+        
+        /* Cute kissing couple */
+        .kissing-couple {
+            margin: 40px 0;
+            display: inline-block;
+            position: relative;
+            animation: floatCouple 3s ease-in-out infinite;
+        }
+        
+        .couple-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+        }
+        
+        @media (max-width: 480px) {
+            .couple-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+        
+        @keyframes floatCouple {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: var(--pink-primary);
+            position: absolute;
+            animation: confettiFall 3s linear;
+        }
+        
+        @keyframes confettiFall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Page 3 - Gift */
+        .gift-container {
+            perspective: 1000px;
+            padding: 20px;
+        }
+        
+        .gift-box {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        @media (max-width: 480px) {
+            .gift-box {
+                width: 200px;
+                height: 200px;
+            }
+        }
+        
+        .gift-box:hover {
+            transform: scale(1.05);
+        }
+        
+        @media (hover: none) {
+            .gift-box:hover {
+                transform: none;
+            }
+        }
+        
+        .box-base {
+            width: 100%;
+            height: 70%;
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-dark));
+            position: absolute;
+            bottom: 0;
+            border-radius: 10px;
+            box-shadow: 0 15px 40px var(--shadow);
+        }
+        
+        .box-lid {
+            width: 100%;
+            height: 35%;
+            background: linear-gradient(135deg, var(--pink-dark), var(--pink-primary));
+            position: absolute;
+            top: 0;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px var(--shadow);
+            transform-origin: bottom;
+            transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .box-lid.open {
+            transform: rotateX(-120deg) translateY(-20px);
+        }
+        
+        .ribbon-v {
+            width: 30px;
+            height: 100%;
+            background: gold;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+        }
+        
+        @media (max-width: 480px) {
+            .ribbon-v {
+                width: 20px;
+            }
+        }
+        
+        .ribbon-h {
+            width: 100%;
+            height: 30px;
+            background: gold;
+            position: absolute;
+            top: 30%;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+        }
+        
+        @media (max-width: 480px) {
+            .ribbon-h {
+                height: 20px;
+            }
+        }
+        
+        .bow {
+            width: 60px;
+            height: 60px;
+            background: gold;
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 50%;
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.6);
+        }
+        
+        @media (max-width: 480px) {
+            .bow {
+                width: 40px;
+                height: 40px;
+                top: -5px;
+            }
+        }
+        
+        .bow::before,
+        .bow::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: gold;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        @media (max-width: 480px) {
+            .bow::before,
+            .bow::after {
+                width: 28px;
+                height: 28px;
+            }
+        }
+        
+        .bow::before { left: -25px; }
+        .bow::after { right: -25px; }
+        
+        @media (max-width: 480px) {
+            .bow::before { left: -18px; }
+            .bow::after { right: -18px; }
+        }
+        
+        .letter {
+            direction: rtl !important;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: white;
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @media (max-width: 768px) {
+            .letter {
+                padding: 35px;
+                width: 85vw;
+                max-height: 75vh;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .letter {
+                padding: 25px;
+                width: 90vw;
+                max-height: 80vh;
+                border-radius: 15px;
+            }
+        }
+        
+        .letter.show {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+        
+        .letter::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .letter::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .letter::-webkit-scrollbar-thumb {
+            background: var(--pink-light);
+            border-radius: 10px;
+        }
+        
+        .letter::-webkit-scrollbar-thumb:hover {
+            background: var(--pink-primary);
+        }
+        
+        .letter h2 {
+            font-family: 'Pacifico', cursive;
+            font-size: 36px;
+            color: var(--pink-primary);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+        
+        html[dir="rtl"] .letter h2 {
+            font-family: 'Amiri', 'Pacifico', cursive;
+        }
+        
+        @media (max-width: 768px) {
+            .letter h2 {
+                font-size: 28px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .letter h2 {
+                font-size: 24px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        .letter p {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 480px) {
+            .letter p {
+                font-size: 16px;
+                line-height: 1.7;
+            }
+        }
+        
+        .letter ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        
+        .letter li {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #333;
+            margin-bottom: 15px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        html[dir="rtl"] .letter li {
+            padding-left: 0;
+            padding-right: 30px;
+        }
+        
+        @media (max-width: 480px) {
+            .letter li {
+                font-size: 16px;
+                line-height: 1.7;
+                padding-left: 25px;
+            }
+            
+            html[dir="rtl"] .letter li {
+                padding-left: 0;
+                padding-right: 25px;
+            }
+        }
+        
+        
+        html[dir="rtl"] .letter li::before {
+            left: auto;
+            right: 0;
+        }
+        
+        .letter .signature {
+            direction: ltr  !important;
+            text-align: right;
+            font-family: 'Pacifico', cursive;
+            font-size: 24px;
+            color: var(--pink-primary);
+            margin-top: 30px;
+        }
+        
+        html[dir="rtl"] .letter .signature {
+            text-align: left;
+            font-family: 'Amiri', 'Pacifico', cursive;
+        }
+        
+        @media (max-width: 480px) {
+            .letter .signature {
+                font-size: 20px;
+                margin-top: 25px;
+            }
+        }
+        
+        /* Instructions */
+        .instruction {
+            margin-top: 30px;
+            font-size: 18px;
+            color: var(--pink-dark);
+            font-weight: 600;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @media (max-width: 480px) {
+            .instruction {
+                font-size: 16px;
+                margin-top: 20px;
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        /* Page 4 - Flowers */
+        .flowers-container {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .flowers-container h1 {
+            font-size: 56px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .flowers-container h1 {
+                font-size: 42px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .flowers-container h1 {
+                font-size: 32px;
+            }
+        }
+        
+        .flowers-bunch {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+            animation: flowerGrow 1s ease-out backwards;
+        }
+        
+        .bouquet-image {
+            max-width: 200px;
+            width: 90%;
+            height: auto;
+            object-fit: contain;
+            animation: flowerGrow 1s ease-out;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .bouquet-image:hover {
+            transform: scale(1.05);
+        }
+        
+        @media (max-width: 768px) {
+            .bouquet-image {
+                max-width: 400px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .bouquet-image {
+                max-width: 200px;
+            }
+        }
+        
+        @keyframes flowerGrow {
+            from {
+                transform: scale(0) rotate(-180deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+        
+        .flowers-message {
+            font-size: 24px;
+            color: var(--pink-dark);
+            font-weight: 600;
+            margin: 30px 0;
+        }
+        
+        @media (max-width: 480px) {
+            .flowers-message {
+                font-size: 18px;
+            }
+        }
+        
+        .next-btn {
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-dark));
+            color: white;
+            font-size: 24px;
+            padding: 18px 45px;
+            margin-top: 20px;
+        }
+        
+        @media (max-width: 480px) {
+            .next-btn {
+                font-size: 18px;
+                padding: 14px 35px;
+            }
+        }
+        
+        /* Fixed continue button that won't move */
+        .continue-fixed-btn {
+            position: fixed !important;
+            bottom: 30px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 1001 !important;
+            animation: none !important;
+            background: linear-gradient(135deg, var(--pink-primary), var(--pink-dark)) !important;
+            color: white !important;
+            font-size: 24px !important;
+            padding: 18px 45px !important;
+            border: none !important;
+            border-radius: 50px !important;
+            cursor: pointer !important;
+            box-shadow: 0 8px 20px var(--shadow) !important;
+            pointer-events: auto !important;
+            transition: transform 0.3s ease !important;
+        }
+        
+        .continue-fixed-btn:hover {
+            transform: translateX(-50%) scale(1.05) !important;
+        }
+        
+        @media (max-width: 480px) {
+            .continue-fixed-btn {
+                font-size: 18px !important;
+                padding: 14px 35px !important;
+                bottom: 20px !important;
+            }
+        }
+        
+        /* Page 5 - Final Message */
+        .final-message {
+            width: 100%;
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+        
+        .final-message h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 56px;
+            color: var(--pink-primary);
+            text-shadow: 3px 3px 6px rgba(255, 107, 157, 0.3);
+            margin-bottom: 60px;
+            animation: celebrateText 1s ease;
+        }
+        
+        html[dir="rtl"] .final-message h1 {
+            font-family: 'Amiri', 'Pacifico', cursive;
+        }
+        
+        @media (max-width: 768px) {
+            .final-message h1 {
+                font-size: 42px;
+                margin-bottom: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .final-message h1 {
+                font-size: 32px;
+                margin-bottom: 30px;
+            }
+        }
+        
+        .made-with-love {
+            font-size: 24px;
+            line-height: 1.8;
+            color: var(--pink-dark);
+            font-weight: 600;
+            background: white;
+            padding: 40px 50px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px var(--shadow);
+            max-width: 700px;
+            animation: cardEntrance 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+        }
+        
+        @media (max-width: 768px) {
+            .made-with-love {
+                font-size: 20px;
+                padding: 30px 35px;
+                max-width: 85%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .made-with-love {
+                font-size: 16px;
+                padding: 25px;
+                max-width: 90%;
+            }
+        }
+        
+        .time-together-bottom {
+            position: absolute;
+            bottom: 0px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 22px;
+            color: var(--pink-dark);
+            font-weight: 700;
+            background: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            box-shadow: 0 10px 30px var(--shadow);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .time-together-bottom {
+                font-size: 18px;
+                padding: 16px 30px;
+                bottom: 30px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .time-together-bottom {
+                font-size: 18px;
+                padding: 6px 20px;
+                bottom: 30px;
+                width: 90%;
+            }
+        }
+        
+        /* Music control */
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px var(--shadow);
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+        
+        @media (max-width: 480px) {
+            .music-control {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+        }
+        
+        .music-icon {
+            font-size: 28px;
+        }
+        
+        @media (max-width: 480px) {
+            .music-icon {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-gradient"></div>
+    <div class="heart-bg" id="heartBg"></div>
+
+    <!-- Page 1: Question -->
+    <!-- 
+        ARABIC TRANSLATION GUIDE:
+        To translate to Arabic, replace the text while keeping the HTML structure:
+        - "Will you be my Valentine?" → "هل تكونين حبيبتي في عيد الحب؟"
+        - "YES! 💕" → "نعم! 💕"
+        - "No" → "لا"
+    -->
+    <div class="page" id="page1">
+        <div class="card">
+            <!-- Replace "sticker1.png" with your cute sticker image -->
+            <img src="cutekiss.webp" alt="Heart" class="big-heart">
+            <h1>Will you be my Valentine?</h1>
+            <div class="buttons">
+                <button class="yes-btn" id="yesBtn">YES! 💕</button>
+                <button class="no-btn" id="noBtn">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Celebration -->
+    <!--
+        ARABIC TRANSLATION GUIDE:
+        - "Yay!" → "يا هلا!"
+        - "I knew you'd say yes! 💖" → "كنت أعلم أنك ستوافقين! 💖"
+        - "Open your gift 🎁" → "افتحي هديتك 🎁"
+    -->
+    <div class="page hidden" id="page2">
+        <div class="celebration">
+            <h1>🎉 Yay! 🎉</h1>
+            
+            <div class="kissing-couple">
+                <!-- Replace "sticker2.png" with your cute kissing couple sticker -->
+                <img src="cutekiss2.gif" alt="Kissing Couple" class="couple-image">
+            </div>
+            
+            <p>I knew you'd say yes! 💖</p>
+            <button class="gift-btn" id="giftBtn">Open your gift 🎁</button>
+        </div>
+    </div>
+
+    <!-- Page 3: Gift -->
+    <!--
+        ARABIC TRANSLATION GUIDE:
+        - "Click the gift to open it! ✨" → "اضغطي على الهدية لفتحها! ✨"
+        - "To My Beautiful Valentine 💝" → "إلى حبيبتي الجميلة 💝"
+        - Translate the letter content while keeping the <strong> tags for emphasis
+        - "Forever yours," → "إلى الأبد،"
+        - "Your Valentine 💕" → "حبيبك 💕"
+    -->
+    <div class="page hidden" id="page3">
+        <div class="gift-container">
+            <div class="gift-box" id="giftBox">
+                <div class="box-lid" id="boxLid">
+                    <div class="bow"></div>
+                </div>
+                <div class="ribbon-v"></div>
+                <div class="ribbon-h"></div>
+                <div class="box-base"></div>
+            </div>
+            <p class="instruction">Click the gift to open it! ✨</p>
+        </div>
+        
+        <div class="letter" id="letter">
+            <h2>To My Beautiful Nadia 💝</h2>
+            <p>أنت النور الذي أرى به، أنت كياني ووجودي، الفتاة التي وجد قلبي في قربها موطنا. أكتب هذه الكلمات ويمتلئ قلبي بالشوق، ولا فكرة تشغل بالي إلا التطوق إلى لقياك. أحبك، بل أعشقك بكل تفاصيلك، وسأظل إلى أن يفنى الوجود. أقدم لك في هذه الرسالة بعض أسباب هيامي:</p>
+            
+            <ul>
+                <li> 💖 أحبك لأن في عينيك سكونا يسكت ضجيج أيامي.</li>
+                
+                <li> 💖 أحبك لأن صوتك يهدئ روحي.</li>
+                
+                <li> 💖 أحب غرابة و تفرد شخصيتك كما لم يحبها أحد قط.</li>
+                
+                <li> 💖 أحب عفويتك و أنوثتك التي تأسرني في كل لحظة</li>
+                
+                <li> 💖 أحب تعابيرك البريئة والجميلة التي لا تفارق محياك.</li>
+                
+                <li> 💖 أحب ذلك الشعور الذي يراودني منذ اللحظة التي التقت فيها روحي بروحك الطاهرة.</li>
+
+                <li> 💖 والأهم من كل هذا، أني أحبك أنت بكل صفاتك، وعيوبك، ومميزاتك. أحبك أنت، حبيبتي.</li>
+
+            </ul>
+            
+            <p>كل لحظة قضيناها، وكل ما لا يزال القدر يعدنا به، هي هبة من الله، ولا زالت ذكريات عديدة تنتظرنا لنعيشها معا. شكرا لأنك أنت ❤️</p>
+            
+            <p class="signature">Forever yours,<br>Rayane💕</p>
+        </div>
+    </div>
+
+    <!-- Page 4: Flowers -->
+    <!--
+        ARABIC TRANSLATION GUIDE:
+        - "For You, My Love 🌹" → "لكِ يا حبيبتي 🌹"
+        - "These flowers are a symbol of my love for you" → "هذه الورود رمز لحبي لك"
+        - "Continue 💕" → "المتابعة 💕"
+        - Replace "bouquet.png" with your actual bouquet image file
+    -->
+    <div class="page hidden" id="page4">
+        <div class="flowers-container">
+            <h1>For You My Love 🌹</h1>
+            <div class="flowers-bunch">
+                <!-- Replace "bouquet.png" with your flower bouquet image -->
+                <img src="bouquet.png" alt="Flower Bouquet" class="bouquet-image">
+            </div>
+            <button class="next-btn" id="photosBtn">Continue 💕</button>
+        </div>
+    </div>
+
+    <!-- Page 5: Final Message -->
+    <!--
+        ARABIC TRANSLATION GUIDE:
+        - "I Love You Nadia" → "أحبك نادية"
+        - "This website was made with Love in 5 days by your Bf Rayane Ettaouil" → "تم إنشاء هذا الموقع بحب في 5 أيام من قبل حبيبك ريان التاويل"
+        - "Time since I knew you:" → "الوقت منذ أن عرفتك:"
+    -->
+    <div class="page hidden" id="page5" style="position:relative; bottom:80px;">
+        <div class="final-message">
+            <h1>I Love You Babyy 💕</br></br></h1>
+            <h1 style="color:red; font-size: 18px;">
+                This website was made with Love in 5 days<br>
+                by your Bf Rayane Ettaouil
+            </h1>
+            <div class="time-together-bottom" id="timeTogether"></div>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <!-- Replace "music.mp3" with your music file -->
+    <!-- Music will start playing after clicking YES or NO on the first page -->
+    <!-- Users can toggle music on/off using the button in the bottom-right corner -->
+    <audio id="bgMusic" loop>
+        <source src="Laufey - Valentine (Official Audio).mp3" type="audio/mpeg">
+    </audio>
+    
+    <!-- Music Control Button -->
+    <div class="music-control" id="musicControl" style=" visibility: hidden !important">
+        <span class="music-icon">🔇</span>
+    </div>
+
+    <script>
+        // Mobile viewport height fix
+        function setViewportHeight() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setViewportHeight();
+        window.addEventListener('resize', setViewportHeight);
+        
+        // Create floating hearts background
+        function createFloatingHearts() {
+            const heartBg = document.getElementById('heartBg');
+            const hearts = ['💕', '💖', '💗', '💝', '💘'];
+            
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 30 + 20) + 'px';
+                heart.style.animationDelay = Math.random() * 15 + 's';
+                heart.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                heartBg.appendChild(heart);
+            }
+        }
+        
+        createFloatingHearts();
+
+        // Page 1: Button interactions
+        const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        let yesBtnSize = 1;
+        let noBtnClicks = 0;
+
+        yesBtn.addEventListener('click', () => {
+            // Start music on first interaction
+            startMusic();
+            
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.remove('hidden');
+            createConfetti();
+        });
+
+        // Make NO button run away
+        function runAwayFromNo() {
+            // Start music on first interaction
+            startMusic();
+            
+            noBtnClicks++;
+            
+            // Grow YES button
+            yesBtnSize += 0.2;
+            yesBtn.style.transform = `scale(${yesBtnSize})`;
+            
+            // Move NO button randomly
+            const maxX = window.innerWidth - 200;
+            const maxY = window.innerHeight - 100;
+            const x = Math.random() * maxX - (maxX / 2);
+            const y = Math.random() * maxY - (maxY / 2);
+            
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = '50%';
+            noBtn.style.top = '50%';
+            noBtn.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+            
+            // Shrink NO button
+            if (noBtnClicks > 3) {
+                const newSize = Math.max(0.3, 1 - (noBtnClicks - 3) * 0.15);
+                noBtn.style.transform += ` scale(${newSize})`;
+            }
+        }
+        
+        noBtn.addEventListener('mouseenter', runAwayFromNo);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            runAwayFromNo();
+        });
+
+        // Page 2: Confetti
+        function createConfetti() {
+            const colors = ['#ff6b9d', '#ffc2d4', '#ff1b6d', '#ffb3cc', '#ffd700'];
+            
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.width = Math.random() * 10 + 5 + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    document.getElementById('page2').appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3500);
+                }, i * 30);
+            }
+        }
+
+        document.getElementById('giftBtn').addEventListener('click', () => {
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('page3').classList.remove('hidden');
+        });
+
+        // Page 3: Gift opening
+        const giftBox = document.getElementById('giftBox');
+        const boxLid = document.getElementById('boxLid');
+        const letter = document.getElementById('letter');
+        let giftOpened = false;
+
+        giftBox.addEventListener('click', () => {
+            if (!giftOpened) {
+                giftOpened = true;
+                boxLid.classList.add('open');
+                
+                setTimeout(() => {
+                    letter.classList.add('show');
+                    document.querySelector('.instruction').style.display = 'none';
+                    
+                    // Show button to go to flowers page after reading letter
+                    setTimeout(() => {
+                        const continueBtn = document.createElement('button');
+                        continueBtn.className = 'continue-fixed-btn';
+                        continueBtn.textContent = 'Continue 💕';
+                        continueBtn.onclick = () => {
+                            document.getElementById('page3').classList.add('hidden');
+                            document.getElementById('page4').classList.remove('hidden');
+                        };
+                        document.getElementById('page3').appendChild(continueBtn);
+                    }, 2000);
+                }, 800);
+            }
+        });
+
+        // Page 4: Navigate to photo gallery
+        document.getElementById('photosBtn').addEventListener('click', () => {
+            document.getElementById('page4').classList.add('hidden');
+            document.getElementById('page5').classList.remove('hidden');
+            startTimer();
+        });
+
+        // Timer function - Calculate time since first meeting
+        function startTimer() {
+            // IMPORTANT: First meeting date
+            // 17 December 2025 at 23:14:00 (11:14 PM)
+            const firstMeeting = new Date('2025-12-11T13:30:00');
+            
+            function updateTimer() {
+                const now = new Date();
+                const diff = now - firstMeeting;
+                
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+                
+                // Responsive timer text with clear label
+                if (window.innerWidth < 480) {
+                    document.getElementById('timeTogether').textContent = 
+                        `Time since we knew each other: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+                } else if (window.innerWidth < 768) {
+                    document.getElementById('timeTogether').textContent = 
+                        `Time since we knew each other: ${days} days, ${hours}h ${minutes}m ${seconds}s`;
+                } else {
+                    document.getElementById('timeTogether').textContent = 
+                        `Time since we knew each other: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds 💕`;
+                }
+            }
+            
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        // Background Music Control
+        const bgMusic = document.getElementById('bgMusic');
+        const musicControl = document.getElementById('musicControl');
+        const musicIcon = musicControl.querySelector('.music-icon');
+        let isPlaying = false;
+        let musicStarted = false;
+
+        // Function to start music (called on first button interaction)
+        function startMusic() {
+            if (!musicStarted) {
+                bgMusic.play().then(() => {
+                    musicIcon.textContent = '🔊';
+                    isPlaying = true;
+                    musicStarted = true;
+                }).catch(e => {
+                    console.log('Audio play failed:', e);
+                });
+            }
+        }
+
+        // Toggle music control
+        musicControl.addEventListener('click', () => {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicIcon.textContent = '🔇';
+                isPlaying = false;
+            } else {
+                bgMusic.play().then(() => {
+                    musicIcon.textContent = '🔊';
+                    isPlaying = true;
+                }).catch(e => console.log('Audio play failed:', e));
+            }
+        });
+    </script>
+</body>
+</html>
