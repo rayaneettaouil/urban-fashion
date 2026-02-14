@@ -1,54 +1,4 @@
 <!DOCTYPE html>
-<!--
-    ====================================
-    FILES YOU NEED TO ADD:
-    ====================================
-    1. sticker1.png - Cute sticker for page 1 (appears in the "Will you be my Valentine?" card)
-       - Recommended size: 300x300px or similar
-       - Format: PNG with transparent background preferred
-       
-    2. sticker2.png - Cute kissing couple sticker for page 2 (appears in celebration page)
-       - Recommended size: 400x400px or similar
-       - Format: PNG with transparent background preferred
-       
-    3. music.mp3 - Background music file (romantic song)
-       - Format: MP3 (most compatible)
-       - Alternative formats: .ogg, .wav also work
-       - Music will start playing automatically after clicking YES or NO on the first page
-       - Music loops continuously
-       - Users can toggle on/off with music button in bottom-right corner
-       
-    4. bouquet.png - Big bouquet of flowers image for page 4
-       - Recommended size: 800x800px or similar
-       - Format: PNG or JPG
-       - This appears on the flowers page before the final message
-       - Place all files in the same folder as this HTML file
-    
-    ====================================
-    TO SWITCH TO ARABIC:
-    ====================================
-    1. Change lang="en" to lang="ar" (in line below)
-    2. Change dir="ltr" to dir="rtl" (in line below)
-    3. Translate the text following the Arabic translation guides in comments throughout the file
-    
-    ====================================
-    IMPORTANT DATE:
-    ====================================
-    - Search for "const firstMeeting" in the JavaScript section (around line 600+)
-    - Currently set to: 17 December 2025 at 23:14:00 (11:14 PM)
-    - Format: 'YYYY-MM-DDTHH:MM:SS'
-    - Example: '2025-12-17T23:14:00' means December 17, 2025 at 11:14 PM
-    - Adjust if you need to change the date/time
-    
-    ====================================
-    HOW TO USE:
-    ====================================
-    1. Place all your image files and music file in the same folder as this HTML
-    2. Make sure filenames match exactly (case-sensitive!)
-    3. Open the HTML file in a web browser
-    4. For best experience, use Chrome, Safari, or Firefox
-    5. Works on mobile phones and tablets too!
--->
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
@@ -1056,14 +1006,8 @@
     <div class="bg-gradient"></div>
     <div class="heart-bg" id="heartBg"></div>
 
-    <!-- Page 1: Question -->
-    <!-- 
-        ARABIC TRANSLATION GUIDE:
-        To translate to Arabic, replace the text while keeping the HTML structure:
-        - "Will you be my Valentine?" → "هل تكونين حبيبتي في عيد الحب؟"
-        - "YES! 💕" → "نعم! 💕"
-        - "No" → "لا"
-    -->
+
+    
     <div class="page" id="page1">
         <div class="card">
             <!-- Replace "sticker1.png" with your cute sticker image -->
@@ -1075,20 +1019,11 @@
             </div>
         </div>
     </div>
-
-    <!-- Page 2: Celebration -->
-    <!--
-        ARABIC TRANSLATION GUIDE:
-        - "Yay!" → "يا هلا!"
-        - "I knew you'd say yes! 💖" → "كنت أعلم أنك ستوافقين! 💖"
-        - "Open your gift 🎁" → "افتحي هديتك 🎁"
-    -->
     <div class="page hidden" id="page2">
         <div class="celebration">
             <h1>🎉 Yay! 🎉</h1>
             
             <div class="kissing-couple">
-                <!-- Replace "sticker2.png" with your cute kissing couple sticker -->
                 <img src="cutekiss2.gif" alt="Kissing Couple" class="couple-image">
             </div>
             
@@ -1097,15 +1032,6 @@
         </div>
     </div>
 
-    <!-- Page 3: Gift -->
-    <!--
-        ARABIC TRANSLATION GUIDE:
-        - "Click the gift to open it! ✨" → "اضغطي على الهدية لفتحها! ✨"
-        - "To My Beautiful Valentine 💝" → "إلى حبيبتي الجميلة 💝"
-        - Translate the letter content while keeping the <strong> tags for emphasis
-        - "Forever yours," → "إلى الأبد،"
-        - "Your Valentine 💕" → "حبيبك 💕"
-    -->
     <div class="page hidden" id="page3">
         <div class="gift-container">
             <div class="gift-box" id="giftBox">
@@ -1145,33 +1071,16 @@
             <p class="signature">Forever yours,<br>Rayane💕</p>
         </div>
     </div>
-
-    <!-- Page 4: Flowers -->
-    <!--
-        ARABIC TRANSLATION GUIDE:
-        - "For You, My Love 🌹" → "لكِ يا حبيبتي 🌹"
-        - "These flowers are a symbol of my love for you" → "هذه الورود رمز لحبي لك"
-        - "Continue 💕" → "المتابعة 💕"
-        - Replace "bouquet.png" with your actual bouquet image file
-    -->
     <div class="page hidden" id="page4">
         <div class="flowers-container">
             <h1>For You My Love 🌹</h1>
             <div class="flowers-bunch">
-                <!-- Replace "bouquet.png" with your flower bouquet image -->
                 <img src="bouquet.png" alt="Flower Bouquet" class="bouquet-image">
             </div>
             <button class="next-btn" id="photosBtn">Continue 💕</button>
         </div>
     </div>
 
-    <!-- Page 5: Final Message -->
-    <!--
-        ARABIC TRANSLATION GUIDE:
-        - "I Love You Nadia" → "أحبك نادية"
-        - "This website was made with Love in 5 days by your Bf Rayane Ettaouil" → "تم إنشاء هذا الموقع بحب في 5 أيام من قبل حبيبك ريان التاويل"
-        - "Time since I knew you:" → "الوقت منذ أن عرفتك:"
-    -->
     <div class="page hidden" id="page5" style="position:relative; bottom:80px;">
         <div class="final-message">
             <h1>I Love You Babyy 💕</br></br></h1>
@@ -1183,10 +1092,7 @@
         </div>
     </div>
 
-    <!-- Background Music -->
-    <!-- Replace "music.mp3" with your music file -->
-    <!-- Music will start playing after clicking YES or NO on the first page -->
-    <!-- Users can toggle music on/off using the button in the bottom-right corner -->
+    
     <audio id="bgMusic" loop>
         <source src="Laufey - Valentine (Official Audio).mp3" type="audio/mpeg">
     </audio>
